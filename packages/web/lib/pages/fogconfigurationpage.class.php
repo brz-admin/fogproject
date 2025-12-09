@@ -47,6 +47,7 @@ class FOGConfigurationPage extends FOGPage
             'customizepxe' => self::$foglang['PXEConfiguration'],
             'newMenu' => self::$foglang['NewMenu'],
             'clientupdater' => self::$foglang['ClientUpdater'],
+            'clientversion' => _('Client Version Management'),
             'maclist' => self::$foglang['MACAddrList'],
             'settings' => self::$foglang['FOGSettings'],
             'logviewer' => self::$foglang['LogViewer'],
@@ -2101,6 +2102,17 @@ class FOGConfigurationPage extends FOGPage
         exit;
     }
     /**
+     * Presents client version management interface.
+     *
+     * @return void
+     */
+    public function clientversion()
+    {
+        $this->title = _('FOG Client Version Management');
+        include '../management/other/clientversion.php';
+    }
+    
+    /**
      * Presents mac listing information.
      *
      * @return void
@@ -2247,6 +2259,7 @@ class FOGConfigurationPage extends FOGPage
             'FOG_CLIENT_TASKREBOOT_ENABLED',
             'FOG_CLIENT_USERCLEANUP_ENABLED',
             'FOG_CLIENT_USERTRACKER_ENABLED',
+            'FOG_CLIENT_VERSION',
             'FOG_ADVANCED_STATISTICS',
             'FOG_CHANGE_HOSTNAME_EARLY',
             'FOG_DISABLE_CHKDSK',

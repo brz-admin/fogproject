@@ -347,6 +347,27 @@ class HostManager extends FOGManagerController
     }
     
     /**
+     * Get the expected client version from settings or use default
+     *
+     * @return string The expected client version
+     */
+    private function getExpectedClientVersion()
+    {
+        // Try to get the version from settings first
+        try {
+            $settingVersion = self::getSetting('FOG_CLIENT_VERSION');
+            if (!empty($settingVersion) && preg_match('/^[a-zA-Z0-9\.\-]+$/', $settingVersion)) {
+                return $settingVersion;
+            }
+        } catch (Exception $e) {
+            // Setting not found or invalid, use default
+        }
+        
+        // Fall back to the hardcoded default version
+        return defined('FOG_CLIENT_VERSION') ? FOG_CLIENT_VERSION : '0.13.0';
+    }
+    
+    /**
      * Updates host information (hostname, IP, and client version) from client data
      *
      * @param Host   $host       The host object to update
@@ -382,6 +403,7 @@ class HostManager extends FOGManagerController
         $currentHostname = $host->get('name');
         $currentIP = $host->get('ip');
         $currentVersion = $host->get('clientVersion');
+        $expectedVersion = $this->getExpectedClientVersion();
         
         // Check if hostname needs updating
         if ($hostname !== $currentHostname) {
@@ -398,7 +420,27 @@ class HostManager extends FOGManagerController
         }
         
         // Check if client version needs updating
-        if ($version !== null && $version !== $currentVersion) {
+        // Handle case where client doesn't send version or version doesn't match expected
+        if ($version === null || $version !== $expectedVersion) {
+            // If client sent a version but it doesn't match expected, log it
+            if ($version !== null && $version !== $currentVersion) {
+                $host->set('clientVersion', $version);
+                $updated = true;
+                $updateMessage .= sprintf(_('Client version updated from %s to %s (expected %s). '), $currentVersion, $version, $expectedVersion);
+            }
+            
+            // If client version is empty or doesn't match expected, set to expected version
+            if (empty($currentVersion) || $currentVersion !== $expectedVersion) {
+                $host->set('clientVersion', $expectedVersion);
+                $updated = true;
+                if ($version !== null) {
+                    $updateMessage .= sprintf(_('Client version corrected to expected version %s. '), $expectedVersion);
+                } else {
+                    $updateMessage .= sprintf(_('Client version set to expected version %s. '), $expectedVersion);
+                }
+            }
+        } elseif ($version !== $currentVersion) {
+            // Client sent matching expected version, update if different from current
             $host->set('clientVersion', $version);
             $updated = true;
             $updateMessage .= sprintf(_('Client version updated from %s to %s. '), $currentVersion, $version);
