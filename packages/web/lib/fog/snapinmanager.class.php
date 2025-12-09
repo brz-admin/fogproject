@@ -43,6 +43,8 @@ class SnapinManager extends FOGManagerController
                 'sName',
                 'sDesc',
                 'sFilePath',
+                'sUrl',
+                'sUrlType',
                 'sArgs',
                 'sCreateDate',
                 'sCreator',
@@ -65,6 +67,8 @@ class SnapinManager extends FOGManagerController
                 'VARCHAR(255)',
                 'LONGTEXT',
                 'LONGTEXT',
+                'LONGTEXT',
+                "ENUM('local', 'http', 'https', 'git')",
                 'LONGTEXT',
                 'TIMESTAMP',
                 'VARCHAR(255)',
@@ -102,6 +106,9 @@ class SnapinManager extends FOGManagerController
                 false,
                 false,
                 false,
+                false,
+                false,
+                false,
                 false
             ),
             array(
@@ -109,6 +116,8 @@ class SnapinManager extends FOGManagerController
                 false,
                 false,
                 false,
+                false,
+                'local',
                 false,
                 'CURRENT_TIMESTAMP',
                 false,
@@ -236,5 +245,91 @@ class SnapinManager extends FOGManagerController
          */
         return self::getClass('SnapinAssociationManager')
             ->destroy($findWhere);
+    }
+    /**
+     * Validates snapin data before saving
+     *
+     * @param array $data The snapin data to validate
+     *
+     * @return array Array with 'valid' boolean and 'message' string
+     */
+    public function validateSnapinData($data)
+    {
+        // Check if name is provided
+        if (empty($data['name'])) {
+            return array('valid' => false, 'message' => _('Snapin name is required'));
+        }
+        
+        // Check if either file or URL is provided
+        $hasFile = !empty($data['file']);
+        $hasUrl = !empty($data['url']) && $data['urlType'] !== 'local';
+        
+        if (!$hasFile && !$hasUrl) {
+            return array('valid' => false, 'message' => _('Either a file or an external URL must be provided'));
+        }
+        
+        // Validate URL if provided
+        if ($hasUrl) {
+            $urlValidation = $this->validateExternalUrl($data['url'], $data['urlType']);
+            if (!$urlValidation['valid']) {
+                return $urlValidation;
+            }
+        }
+        
+        return array('valid' => true, 'message' => '');
+    }
+    /**
+     * Validates external URL
+     *
+     * @param string $url The URL to validate
+     * @param string $urlType The URL type
+     *
+     * @return array Array with 'valid' boolean and 'message' string
+     */
+    public function validateExternalUrl($url, $urlType)
+    {
+        // Basic URL format validation
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            return array('valid' => false, 'message' => _('Invalid URL format'));
+        }
+        
+        // Check protocol
+        $allowedProtocols = array('http', 'https');
+        $protocol = parse_url($url, PHP_URL_SCHEME);
+        
+        if (!in_array($protocol, $allowedProtocols)) {
+            return array('valid' => false, 'message' => _('Only HTTP and HTTPS URLs are allowed'));
+        }
+        
+        // Check domain restrictions
+        $allowedDomains = self::getSetting('FOG_SNAPIN_URL_DOMAINS');
+        if (!empty($allowedDomains)) {
+            $domainList = array_map('trim', explode(',', $allowedDomains));
+            $urlDomain = parse_url($url, PHP_URL_HOST);
+            
+            if (!in_array($urlDomain, $domainList)) {
+                return array(
+                    'valid' => false, 
+                    'message' => sprintf(_('URL domain %s is not in the allowed domains list'), $urlDomain)
+                );
+            }
+        }
+        
+        // Test URL accessibility (optional, can be slow)
+        if (function_exists('curl_init')) {
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_NOBODY, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            
+            if ($httpCode < 200 || $httpCode >= 400) {
+                return array('valid' => false, 'message' => _('URL is not accessible (HTTP code: ') . $httpCode . ')');
+            }
+        }
+        
+        return array('valid' => true, 'message' => '');
     }
 }

@@ -3779,3 +3779,12 @@ $this->schema[] = array(
     . "('FOG_PXE_BOOT_IMAGE_ARM','The settings defines where the ARM "
     . "fog boot file system image is located.','arm_init.cpio.gz','TFTP Server')",
 );
+// 274
+$this->schema[] = array(
+    "ALTER TABLE `snapins` ADD COLUMN `sUrl` LONGTEXT NOT NULL DEFAULT '' AFTER `sFilePath`",
+    "ALTER TABLE `snapins` ADD COLUMN `sUrlType` ENUM('local', 'http', 'https', 'git') NOT NULL DEFAULT 'local' AFTER `sUrl`",
+    "INSERT IGNORE INTO `globalSettings` "
+    . "(`settingKey`,`settingDesc`,`settingValue`,`settingCategory`) "
+    . "VALUES "
+    . "('FOG_SNAPIN_URL_DOMAINS','Comma-separated list of allowed domains for external snapin URLs. Leave empty to allow all domains. Example: gitea.company.com,github.com','', 'Snapin Management')",
+);

@@ -453,4 +453,48 @@ class Snapin extends FOGController
 
         return $this;
     }
+    /**
+     * Checks if this snapin uses an external URL
+     *
+     * @return bool
+     */
+    public function isExternal()
+    {
+        return $this->get('urlType') !== 'local' && !empty($this->get('url'));
+    }
+    /**
+     * Gets the effective file path or URL for this snapin
+     *
+     * @return string
+     */
+    public function getEffectivePath()
+    {
+        if ($this->isExternal()) {
+            return $this->get('url');
+        }
+        return $this->get('file');
+    }
+    /**
+     * Validates external URL against domain restrictions
+     *
+     * @return bool
+     */
+    public function validateUrl()
+    {
+        if (!$this->isExternal()) {
+            return true;
+        }
+        
+        $url = $this->get('url');
+        $allowedDomains = self::getSetting('FOG_SNAPIN_URL_DOMAINS');
+        
+        if (empty($allowedDomains)) {
+            return true; // No restrictions
+        }
+        
+        $domainList = array_map('trim', explode(',', $allowedDomains));
+        $urlDomain = parse_url($url, PHP_URL_HOST);
+        
+        return in_array($urlDomain, $domainList);
+    }
 }

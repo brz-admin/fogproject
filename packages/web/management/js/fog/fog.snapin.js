@@ -61,6 +61,24 @@
         updateCmdStore();
     });
     $('.snapinpack-input').trigger('change');
+    // Handle snapin source type toggle (file vs URL)
+    $('.snapintype-input').on('change blur', function(e) {
+        var snapinType = $(this).val();
+        if (snapinType === 'url') {
+            $('.snapinfile-section').hide();
+            $('.snapinurl-section').show();
+            // Clear file input when switching to URL
+            $('.cmdlet3').val('');
+            $('.filedisp').val('');
+        } else {
+            $('.snapinfile-section').show();
+            $('.snapinurl-section').hide();
+            // Clear URL inputs when switching to file
+            $('.snapinurl-input').val('');
+        }
+    });
+    // Initialize based on current selection
+    $('.snapintype-input').trigger('change');
 })(jQuery);
 function updateCmdStore() {
     if (typeof $('.cmdlet3').val() === 'undefined') return;

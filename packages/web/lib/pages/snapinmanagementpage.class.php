@@ -589,13 +589,28 @@ class SnapinManagementPage extends FOGPage
             . $rwa
             . '"/>'
             . '</div>',
-            '<label for="snapinfile">'
+            '<label for="snapintype">'
+            . _('Snapin Source')
+            . '</label>' => '<div class="input-group">'
+            . '<select class="snapintype-input form-control" name="snapintype" id="snapintype">'
+            . '<option value="file">'
+            . _('Upload File')
+            . '</option>'
+            . '<option value="url">'
+            . _('External URL')
+            . '</option>'
+            . '</select>'
+            . '</div>',
+            '<span class="snapinfile-section">'
+            . '<label for="snapinfile">'
             . _('Snapin File')
             . '<br/>'
             . _('Max Size')
             . ': '
             . ini_get('post_max_size')
-            . '</label>' => '<div class="input-group">'
+            . '</label>'
+            . '</span>' => '<span class="snapinfile-section">'
+            . '<div class="input-group">'
             . '<label class="input-group-btn">'
             . '<span class="btn btn-info">'
             . _('Browse')
@@ -604,7 +619,34 @@ class SnapinManagementPage extends FOGPage
             . '</span>'
             . '</label>'
             . '<input type="text" class="form-control filedisp cmdlet3" readonly/>'
-            . '</div>',
+            . '</div>'
+            . '</span>',
+            '<span class="snapinurl-section hiddeninitially">'
+            . '<label for="snapinurl">'
+            . _('External URL')
+            . '</label>'
+            . '</span>' => '<span class="snapinurl-section hiddeninitially">'
+            . '<div class="input-group">'
+            . '<input type="url" class="snapinurl-input form-control" '
+            . 'name="snapinurl" id="snapinurl" placeholder="'
+            . _('https://gitea.company.com/user/repo/raw/branch/script.ps1')
+            . '"/>'
+            . '</div>'
+            . '</span>',
+            '<span class="snapinurl-section hiddeninitially">'
+            . '<label for="snapinurltype">'
+            . _('URL Type')
+            . '</label>'
+            . '</span>' => '<span class="snapinurl-section hiddeninitially">'
+            . '<div class="input-group">'
+            . '<select class="snapinurltype-input form-control" '
+            . 'name="snapinurltype" id="snapinurltype">'
+            . '<option value="https">HTTPS</option>'
+            . '<option value="http">HTTP</option>'
+            . '<option value="git">Git Raw</option>'
+            . '</select>'
+            . '</div>'
+            . '</span>',
             (
                 count($filelist) > 0 ?
                 '<label for="snapinfileexist">'
@@ -713,14 +755,29 @@ class SnapinManagementPage extends FOGPage
         $runWith = filter_input(INPUT_POST, 'rw');
         $runWithArgs = filter_input(INPUT_POST, 'rwa');
         $storagegroup = (int)filter_input(INPUT_POST, 'storagegroup');
-        $snapinfile = basename(
-            filter_input(INPUT_POST, 'snapinfileexist')
-        );
-        $uploadfile = basename(
-            isset($_FILES['snapin']['name']) ? $_FILES['snapin']['name'] : ''
-        );
-        if ($uploadfile) {
-            $snapinfile = $uploadfile;
+        $snapintype = filter_input(INPUT_POST, 'snapintype');
+        $snapinurl = filter_input(INPUT_POST, 'snapinurl');
+        $snapinurltype = filter_input(INPUT_POST, 'snapinurltype');
+        
+        // Handle file vs URL
+        $snapinfile = '';
+        $url = '';
+        $urlType = 'local';
+        
+        if ($snapintype === 'url') {
+            $url = $snapinurl;
+            $urlType = $snapinurltype ?: 'https';
+            $snapinfile = basename(parse_url($url, PHP_URL_PATH));
+        } else {
+            $snapinfile = basename(
+                filter_input(INPUT_POST, 'snapinfileexist')
+            );
+            $uploadfile = basename(
+                isset($_FILES['snapin']['name']) ? $_FILES['snapin']['name'] : ''
+            );
+            if ($uploadfile) {
+                $snapinfile = $uploadfile;
+            }
         }
         $isEnabled = (int)isset($_POST['isEnabled']);
         $toReplicate = (int)isset($_POST['toReplicate']);
@@ -762,15 +819,16 @@ class SnapinManagementPage extends FOGPage
                     _('A snapin already exists with this name!')
                 );
             }
-            if (!$snapinfile) {
-                throw new Exception(
-                    sprintf(
-                        '%s, %s, %s!',
-                        _('A file'),
-                        _('either already selected or uploaded'),
-                        _('must be specified')
-                    )
-                );
+            // Validate snapin data using SnapinManager
+            $snapinData = array(
+                'name' => $name,
+                'file' => $snapinfile,
+                'url' => $url,
+                'urlType' => $urlType
+            );
+            $validation = self::getClass('SnapinManager')->validateSnapinData($snapinData);
+            if (!$validation['valid']) {
+                throw new Exception($validation['message']);
             }
             if (preg_match('#ssl#i', $snapinfile)) {
                 throw new Exception(
@@ -784,62 +842,70 @@ class SnapinManagementPage extends FOGPage
             $snapinfile = preg_replace('/[^-\w\.]+/', '_', $snapinfile);
             $StorageGroup = new StorageGroup($storagegroup);
             $StorageNode = $StorageGroup->getMasterStorageNode();
-            if (!$snapinfile && $_FILES['snapin']['error'] > 0) {
-                throw new UploadException($_FILES['snapin']['error']);
-            }
-            $tmp_name = isset($_FILES['snapin']['tmp_name']) ? $_FILES['snapin']['tmp_name'] : '';
-            $src = sprintf('%s/%s', dirname($tmp_name), basename($tmp_name));
-            unset($tmp_name);
-            $dest = sprintf(
-                '/%s/%s',
-                trim(
-                    $StorageNode->get('snapinpath'),
-                    '/'
-                ),
-                $snapinfile
-            );
+            
             set_time_limit(0);
             $hash = '';
             $size = 0;
-            if ($uploadfile && file_exists($src)) {
-                $hash = hash_file('sha512', $src);
-                $size = self::getFilesize($src);
-                self::$FOGFTP
-                    ->set('host', $StorageNode->get('ip'))
-                    ->set('username', $StorageNode->get('user'))
-                    ->set('password', $StorageNode->get('pass'));
-                if (!self::$FOGFTP->connect()) {
-                    throw new Exception(
-                        sprintf(
-                            '%s: %s: %s.',
-                            _('Storage Node'),
-                            $StorageNode->get('ip'),
-                            _('FTP Connection has failed')
-                        )
-                    );
+            
+            // Handle file upload only for local snapins
+            if ($snapintype === 'file') {
+                if (!$snapinfile && $_FILES['snapin']['error'] > 0) {
+                    throw new UploadException($_FILES['snapin']['error']);
                 }
-                if (!self::$FOGFTP->chdir($StorageNode->get('snapinpath'))) {
-                    if (!self::$FOGFTP->mkdir($StorageNode->get('snapinpath'))) {
+                $tmp_name = isset($_FILES['snapin']['tmp_name']) ? $_FILES['snapin']['tmp_name'] : '';
+                $src = sprintf('%s/%s', dirname($tmp_name), basename($tmp_name));
+                unset($tmp_name);
+                $dest = sprintf(
+                    '/%s/%s',
+                    trim(
+                        $StorageNode->get('snapinpath'),
+                        '/'
+                    ),
+                    $snapinfile
+                );
+                
+                if ($uploadfile && file_exists($src)) {
+                    $hash = hash_file('sha512', $src);
+                    $size = self::getFilesize($src);
+                    self::$FOGFTP
+                        ->set('host', $StorageNode->get('ip'))
+                        ->set('username', $StorageNode->get('user'))
+                        ->set('password', $StorageNode->get('pass'));
+                    if (!self::$FOGFTP->connect()) {
                         throw new Exception(
-                            _('Failed to add snapin')
+                            sprintf(
+                                '%s: %s: %s.',
+                                _('Storage Node'),
+                                $StorageNode->get('ip'),
+                                _('FTP Connection has failed')
+                            )
                         );
                     }
+                    if (!self::$FOGFTP->chdir($StorageNode->get('snapinpath'))) {
+                        if (!self::$FOGFTP->mkdir($StorageNode->get('snapinpath'))) {
+                            throw new Exception(
+                                _('Failed to add snapin')
+                            );
+                        }
+                    }
+                    self::$FOGFTP->delete($dest);
+                    if (!self::$FOGFTP->put($dest, $src)) {
+                        throw new Exception(
+                            _('Failed to add/update snapin file')
+                        );
+                    }
+                    self::$FOGFTP
+                        ->chmod(0777, $dest)
+                        ->close();
                 }
-                self::$FOGFTP->delete($dest);
-                if (!self::$FOGFTP->put($dest, $src)) {
-                    throw new Exception(
-                        _('Failed to add/update snapin file')
-                    );
-                }
-                self::$FOGFTP
-                    ->chmod(0777, $dest)
-                    ->close();
             }
             $Snapin = self::getClass('Snapin')
                 ->set('name', $name)
                 ->set('packtype', $packtype)
                 ->set('description', $desc)
                 ->set('file', $snapinfile)
+                ->set('url', $url)
+                ->set('urlType', $urlType)
                 ->set('hash', $hash)
                 ->set('size', $size)
                 ->set('args', $args)

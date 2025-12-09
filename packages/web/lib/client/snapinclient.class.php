@@ -183,6 +183,14 @@ class SnapinClient extends FOGClient implements FOGClientSend
                     } elseif ($Snapin->get('reboot')) {
                         $action = 'reboot';
                     }
+                    // Handle external URLs
+                    $fileUrl = '';
+                    if ($Snapin->isExternal()) {
+                        $fileUrl = $Snapin->get('url');
+                    } else {
+                        $fileUrl = rtrim(isset($StorageNode->location_url) ? $StorageNode->location_url : '', '/') . '/' . $Snapin->get('file');
+                    }
+                    
                     $info['snapins'][] = array(
                         'pack' =>(bool)$Snapin->get('packtype'),
                         'hide' => (bool)$Snapin->get('hide'),
@@ -197,7 +205,8 @@ class SnapinClient extends FOGClient implements FOGClientSend
                         'runwithargs' => $Snapin->get('runWithArgs'),
                         'hash' => strtoupper($hash),
                         'size' => $Snapin->get('size'),
-                        'url' => rtrim(isset($StorageNode->location_url) ? $StorageNode->location_url : '', '/'),
+                        'url' => $fileUrl,
+                        'isExternal' => $Snapin->isExternal(),
                     );
                     unset($Snapin, $SnapinTask);
                 }
@@ -559,6 +568,65 @@ class SnapinClient extends FOGClient implements FOGClientSend
                 );
             }
         }
+        // Handle external URLs
+        if ($Snapin->isExternal()) {
+            $url = $Snapin->get('url');
+            $file = $Snapin->get('file');
+            
+            if ($Task->isValid()) {
+                $Task
+                    ->set('stateID', self::getProgressState())
+                    ->set('checkInTime', self::niceDate()->format('Y-m-d H:i:s'))
+                    ->save();
+            }
+            $SnapinJob
+                ->set('stateID', self::getProgressState())
+                ->save();
+            $SnapinTask
+                ->set('stateID', self::getProgressState())
+                ->set('return', -1)
+                ->set('details', _('Pending...'))
+                ->save();
+            
+            while (ob_get_level()) {
+                ob_end_clean();
+            }
+            
+            // Stream external file directly
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header("Content-Disposition: attachment; filename=$file");
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            
+            $context = stream_context_create(array(
+                'http' => array(
+                    'timeout' => 30,
+                    'user_agent' => 'FOG-Client/1.0'
+                )
+            ));
+            
+            $handle = fopen($url, 'rb', false, $context);
+            if ($handle === false) {
+                throw new Exception(
+                    sprintf(
+                        '%s: %s',
+                        '#!er',
+                        _('Cannot access external URL')
+                    )
+                );
+            }
+            
+            while (!feof($handle)) {
+                echo fread($handle, 4096);
+                flush();
+            }
+            fclose($handle);
+            exit;
+        }
+        
+        // Handle local files (existing logic)
         $path = sprintf(
             '/%s',
             trim($StorageNode->get('snapinpath'), '/')
