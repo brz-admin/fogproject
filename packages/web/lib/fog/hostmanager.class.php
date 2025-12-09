@@ -345,4 +345,68 @@ class HostManager extends FOGManagerController
          */
         self::getClass('PowerManagementManager')->destroy($findWhere);
     }
+    
+    /**
+     * Updates host information (hostname and IP) from client data
+     *
+     * @param Host   $host       The host object to update
+     * @param string $hostname   The new hostname from client
+     * @param string $ip         The new IP address from client
+     * 
+     * @return array             Array with update status and message
+     */
+    public function updateHostInfoFromClient($host, $hostname, $ip)
+    {
+        if (!$host instanceof Host || !$host->isValid()) {
+            throw new Exception(_('Invalid host object'));
+        }
+        
+        // Validate hostname format
+        if (!preg_match('/^[a-zA-Z0-9\-_]+$/', $hostname)) {
+            throw new Exception(_('Invalid hostname format'));
+        }
+        
+        // Validate IP address format
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+            throw new Exception(_('Invalid IP address format'));
+        }
+        
+        $updated = false;
+        $updateMessage = '';
+        $currentHostname = $host->get('name');
+        $currentIP = $host->get('ip');
+        
+        // Check if hostname needs updating
+        if ($hostname !== $currentHostname) {
+            $host->set('name', $hostname);
+            $updated = true;
+            $updateMessage .= sprintf(_('Hostname updated from %s to %s. '), $currentHostname, $hostname);
+        }
+        
+        // Check if IP address needs updating
+        if ($ip !== $currentIP) {
+            $host->set('ip', $ip);
+            $updated = true;
+            $updateMessage .= sprintf(_('IP address updated from %s to %s. '), $currentIP, $ip);
+        }
+        
+        // If there were updates, save the host record
+        if ($updated) {
+            if ($host->save()) {
+                return array(
+                    'success' => true,
+                    'updated' => true,
+                    'message' => $updateMessage
+                );
+            } else {
+                throw new Exception(_('Failed to save host updates'));
+            }
+        } else {
+            return array(
+                'success' => true,
+                'updated' => false,
+                'message' => _('Host information is already up to date')
+            );
+        }
+    }
 }
