@@ -64,6 +64,7 @@ $this->schema[] = array(
     . '`hostCreateBy` varchar(50) NOT NULL,'
     . '`hostMAC` varchar(20) NOT NULL,'
     . '`hostOS` int(10) unsigned NOT NULL,'
+    . '`hostClientVersion` varchar(20) NOT NULL DEFAULT \'\','
     . 'PRIMARY KEY  (`hostID`),'
     . 'KEY `new_index` (`hostName`),'
     . 'KEY `new_index1` (`hostIP`),'

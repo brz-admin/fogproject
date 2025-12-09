@@ -63,7 +63,8 @@ class Host extends FOGController
         'efiexit' => 'hostExitEfi',
         'enforce' => 'hostEnforce',
         'token' => 'hostInfoKey',
-        'tokenlock' => 'hostInfoLock'
+        'tokenlock' => 'hostInfoLock',
+        'clientVersion' => 'hostClientVersion'
     );
     /**
      * The required fields

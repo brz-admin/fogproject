@@ -347,15 +347,16 @@ class HostManager extends FOGManagerController
     }
     
     /**
-     * Updates host information (hostname and IP) from client data
+     * Updates host information (hostname, IP, and client version) from client data
      *
      * @param Host   $host       The host object to update
      * @param string $hostname   The new hostname from client
      * @param string $ip         The new IP address from client
+     * @param string $version    The client version from client (optional)
      * 
      * @return array             Array with update status and message
      */
-    public function updateHostInfoFromClient($host, $hostname, $ip)
+    public function updateHostInfoFromClient($host, $hostname, $ip, $version = null)
     {
         if (!$host instanceof Host || !$host->isValid()) {
             throw new Exception(_('Invalid host object'));
@@ -371,10 +372,16 @@ class HostManager extends FOGManagerController
             throw new Exception(_('Invalid IP address format'));
         }
         
+        // Validate version format if provided
+        if ($version !== null && !preg_match('/^[a-zA-Z0-9\.\-]+$/', $version)) {
+            throw new Exception(_('Invalid client version format'));
+        }
+        
         $updated = false;
         $updateMessage = '';
         $currentHostname = $host->get('name');
         $currentIP = $host->get('ip');
+        $currentVersion = $host->get('clientVersion');
         
         // Check if hostname needs updating
         if ($hostname !== $currentHostname) {
@@ -388,6 +395,13 @@ class HostManager extends FOGManagerController
             $host->set('ip', $ip);
             $updated = true;
             $updateMessage .= sprintf(_('IP address updated from %s to %s. '), $currentIP, $ip);
+        }
+        
+        // Check if client version needs updating
+        if ($version !== null && $version !== $currentVersion) {
+            $host->set('clientVersion', $version);
+            $updated = true;
+            $updateMessage .= sprintf(_('Client version updated from %s to %s. '), $currentVersion, $version);
         }
         
         // If there were updates, save the host record

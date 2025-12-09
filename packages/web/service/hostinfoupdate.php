@@ -53,6 +53,9 @@ try {
         throw new Exception(_('Missing required parameters: hostname and/or ip'));
     }
     
+    // Get version parameter if provided
+    $clientVersion = isset($_REQUEST['version']) ? trim($_REQUEST['version']) : null;
+    
     // Additional security: Check if the host has the module enabled
     $hostModInfo = self::getSubObjectIDs(
         'Module',
@@ -94,9 +97,14 @@ try {
         throw new Exception(_('Invalid IP address format'));
     }
     
+    // Validate version format if provided
+    if ($clientVersion !== null && !preg_match('/^[a-zA-Z0-9\.\-]+$/', $clientVersion)) {
+        throw new Exception(_('Invalid client version format'));
+    }
+    
     // Use the HostManager to update host information
     $hostManager = FOGCore::getClass('HostManager');
-    $result = $hostManager->updateHostInfoFromClient(FOGCore::$Host, $clientHostname, $clientIP);
+    $result = $hostManager->updateHostInfoFromClient(FOGCore::$Host, $clientHostname, $clientIP, $clientVersion);
     
     if ($result['success']) {
         if ($result['updated']) {
