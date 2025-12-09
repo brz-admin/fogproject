@@ -42,6 +42,7 @@ $this->schema[] = array(
     . '`groupDateTime` DATETIME NOT NULL,'
     . '`groupCreateBy` VARCHAR(50) NOT NULL,'
     . '`groupBuilding` INT(11) NOT NULL,'
+    . '`groupIsTestGroup` TINYINT(1) NOT NULL DEFAULT 0,'
     . 'PRIMARY KEY (`groupID`),'
     . 'KEY `new_index` (`groupName`)'
     . ') ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC',

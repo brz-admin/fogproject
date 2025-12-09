@@ -106,6 +106,47 @@ updateDB() {
         return
     fi
 
+    # Add test group functionality if not already present
+    dots "Setting up test group functionality"
+    mysql ${host} -s --user=root --password="${snmysqlrootpass}" --execute="
+        SET @database = '$mysqldbname';
+        
+        -- Check if groupIsTestGroup column exists
+        SET @column_exists = (
+            SELECT COUNT(*) 
+            FROM information_schema.COLUMNS 
+            WHERE TABLE_SCHEMA = @database 
+            AND TABLE_NAME = 'groups' 
+            AND COLUMN_NAME = 'groupIsTestGroup'
+        );
+        
+        -- Add column if it doesn't exist
+        SET @sql = IF(@column_exists = 0, 
+            'ALTER TABLE \`groups\` ADD COLUMN \`groupIsTestGroup\` TINYINT(1) NOT NULL DEFAULT 0', 
+            'SELECT 1' 
+        );
+        PREPARE stmt FROM @sql;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+        
+        -- Check if FOG_CLIENT_VERSION setting exists
+        SET @setting_exists = (
+            SELECT COUNT(*) 
+            FROM \`$mysqldbname\`.globalSettings 
+            WHERE settingKey = 'FOG_CLIENT_VERSION'
+        );
+        
+        -- Add setting if it doesn't exist
+        SET @sql = IF(@setting_exists = 0, 
+            CONCAT('INSERT INTO \`$mysqldbname\`.globalSettings (settingKey, settingDesc, settingValue, settingCategory) VALUES (\"FOG_CLIENT_VERSION\", \"Expected FOG Client version for compliance monitoring\", \"0.13.0\", \"FOG Client\")'), 
+            'SELECT 1' 
+        );
+        PREPARE stmt FROM @sql;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+    " $mysqldbname >>$error_log 2>&1
+    errorStat $?
+
     # we still need to grant access for the fogstorage DB user
     # and therefore need root DB access
     mysql $sqloptionsroot --password="${snmysqlrootpass}" --execute="quit" >>$error_log 2>&1
