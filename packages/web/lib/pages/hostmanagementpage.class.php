@@ -198,6 +198,8 @@ class HostManagementPage extends FOGPage
         array_push(
             $this->headerData,
             _('Host'),
+            _('IP Address'),
+            _('Client Version'),
             _('Imaged'),
             _('Task'),
             _('Assigned Image')
@@ -229,6 +231,8 @@ class HostManagementPage extends FOGPage
             . '</a>'
             . '<br/>'
             . '<small>${host_mac}</small>',
+            '<small>${host_ip}</small>',
+            '<small>${host_client_version}</small>',
             '<small>${deployed}</small>',
             sprintf(
                 '<a href="?node=host&sub=deploy&type=1&id=${id}">'
@@ -277,6 +281,8 @@ class HostManagementPage extends FOGPage
         array_push(
             $this->attributes,
             array('width' => 50),
+            array('width' => 100),
+            array('width' => 120),
             array('width' => 145),
             array(
                 'width' => 60,
@@ -302,6 +308,8 @@ class HostManagementPage extends FOGPage
                 ),
                 'host_name' => $Host->name,
                 'host_mac' => $Host->primac,
+                'host_ip' => $Host->ip,
+                'host_client_version' => !empty($Host->clientVersion) ? $Host->clientVersion : _('N/A'),
                 'host_desc' => $Host->description,
                 'image_id' => $Host->imageID,
                 'image_name' => $Host->imagename,
@@ -1149,6 +1157,20 @@ class HostManagementPage extends FOGPage
             . $productKey
             . '" id="productKey" class="form-control"/>'
             . '</div>',
+            '<label for="ip">'
+            . _('Host IP Address')
+            . '</label>' => '<div class="input-group">'
+            . '<input type="text" name="ip" value="'
+            . (filter_input(INPUT_POST, 'ip') ?: $this->obj->get('ip'))
+            . '" id="ip" class="form-control"/>'
+            . '</div>',
+            '<label for="clientVersion">'
+            . _('Client Version')
+            . '</label>' => '<div class="input-group">'
+            . '<input type="text" name="clientVersion" value="'
+            . (filter_input(INPUT_POST, 'clientVersion') ?: $this->obj->get('clientVersion'))
+            . '" id="clientVersion" class="form-control" readonly/>'
+            . '</div>',
             '<label for="image">'
             . _('Host Image')
             . '</label>' => $imageSelect,
@@ -1387,6 +1409,13 @@ class HostManagementPage extends FOGPage
         ) {
             throw new Exception(_('Cannot change image when in tasking'));
         }
+        $ip = trim(
+            filter_input(INPUT_POST, 'ip')
+        );
+        $clientVersion = trim(
+            filter_input(INPUT_POST, 'clientVersion')
+        );
+        
         $this
             ->obj
             ->set('name', $name)
@@ -1398,7 +1427,9 @@ class HostManagementPage extends FOGPage
             ->set('init', $init)
             ->set('biosexit', $bte)
             ->set('efiexit', $ebte)
-            ->set('productKey', $productKey);
+            ->set('productKey', $productKey)
+            ->set('ip', $ip)
+            ->set('clientVersion', $clientVersion);
         $primac = $this->obj->get('mac')->__toString();
         $setmac = $mac->__toString();
         if ($primac != $setmac) {

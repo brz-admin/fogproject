@@ -2095,11 +2095,34 @@ abstract class FOGBase
      */
     public static function setSetting($key, $value)
     {
-        self::getClass('ServiceManager')->update(
-            array('name' => $key),
-            '',
-            array('value' => trim($value))
-        );
+        // Check if setting exists
+        try {
+            $setting = self::getClass('Service')->set('name', $key)->load('name');
+            if ($setting->isValid()) {
+                // Update existing setting
+                self::getClass('ServiceManager')->update(
+                    array('name' => $key),
+                    '',
+                    array('value' => trim($value))
+                );
+            } else {
+                // Create new setting
+                $newSetting = self::getClass('Service')
+                    ->set('name', $key)
+                    ->set('value', trim($value))
+                    ->set('description', 'Setting: ' . $key)
+                    ->set('category', 'General');
+                $newSetting->save();
+            }
+        } catch (Exception $e) {
+            // If setting doesn't exist, create it
+            $newSetting = self::getClass('Service')
+                ->set('name', $key)
+                ->set('value', trim($value))
+                ->set('description', 'Setting: ' . $key)
+                ->set('category', 'General');
+            $newSetting->save();
+        }
     }
     /**
      * Gets queued state ids.

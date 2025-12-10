@@ -22,6 +22,13 @@ try {
     $currentVersion = self::getSetting('FOG_CLIENT_VERSION');
 } catch (Exception $e) {
     $currentVersion = '0.13.0'; // Default version
+    // Create the setting if it doesn't exist
+    try {
+        self::setSetting('FOG_CLIENT_VERSION', $currentVersion);
+        self::log('Created FOG_CLIENT_VERSION setting with default value: ' . $currentVersion);
+    } catch (Exception $createError) {
+        self::log('Failed to create FOG_CLIENT_VERSION setting: ' . $createError->getMessage());
+    }
 }
 
 // Handle form submission for updating client version
