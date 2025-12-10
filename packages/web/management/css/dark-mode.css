@@ -1,0 +1,692 @@
+/*
+ * FOG Dark Mode Styles
+ * 
+ * Dark theme for FOG web interface
+ */
+
+:root {
+    --primary-color: #343a40;
+    --secondary-color: #495057;
+    --tertiary-color: #6c757d;
+    --background-color: #212529;
+    --surface-color: #2c3136;
+    --text-color: #e9ecef;
+    --text-muted: #adb5bd;
+    --border-color: #495057;
+    --success-color: #28a745;
+    --info-color: #17a2b8;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --link-color: #007bff;
+    --code-bg: #2c3136;
+    --input-bg: #343a40;
+    --input-border: #495057;
+    --input-text: #e9ecef;
+    --table-bg: #2c3136;
+    --table-border: #495057;
+    --table-hover: #343a40;
+    --navbar-bg: #212529;
+    --navbar-text: #e9ecef;
+    --panel-bg: #2c3136;
+    --panel-border: #495057;
+    --panel-heading-bg: #343a40;
+    --panel-heading-text: #e9ecef;
+    --btn-primary-bg: #007bff;
+    --btn-primary-text: #ffffff;
+    --btn-secondary-bg: #6c757d;
+    --btn-secondary-text: #ffffff;
+    --btn-success-bg: #28a745;
+    --btn-success-text: #ffffff;
+    --btn-info-bg: #17a2b8;
+    --btn-info-text: #ffffff;
+    --btn-warning-bg: #ffc107;
+    --btn-warning-text: #212529;
+    --btn-danger-bg: #dc3545;
+    --btn-danger-text: #ffffff;
+}
+
+/* Dark mode base styles */
+body.dark-mode {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+/* Typography */
+.dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode h4, .dark-mode h5, .dark-mode h6 {
+    color: var(--text-color);
+}
+
+.dark-mode a {
+    color: var(--link-color);
+}
+
+.dark-mode a:hover {
+    color: var(--link-color);
+    text-decoration: underline;
+}
+
+.dark-mode .text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Navigation */
+.dark-mode .navbar-inverse {
+    background-color: var(--navbar-bg);
+    border-color: var(--border-color);
+}
+
+.dark-mode .navbar-inverse .navbar-brand {
+    color: var(--navbar-text);
+}
+
+.dark-mode .navbar-inverse .navbar-nav > li > a {
+    color: var(--navbar-text);
+}
+
+.dark-mode .navbar-inverse .navbar-nav > li > a:hover,
+.dark-mode .navbar-inverse .navbar-nav > li > a:focus {
+    color: var(--link-color);
+    background-color: var(--surface-color);
+}
+
+.dark-mode .navbar-inverse .navbar-nav > .active > a,
+.dark-mode .navbar-inverse .navbar-nav > .active > a:hover,
+.dark-mode .navbar-inverse .navbar-nav > .active > a:focus {
+    color: var(--link-color);
+    background-color: var(--primary-color);
+}
+
+.dark-mode .navbar-inverse .navbar-toggle {
+    border-color: var(--border-color);
+}
+
+.dark-mode .navbar-inverse .navbar-toggle .icon-bar {
+    background-color: var(--navbar-text);
+}
+
+.dark-mode .navbar-inverse .navbar-toggle:hover,
+.dark-mode .navbar-inverse .navbar-toggle:focus {
+    background-color: var(--surface-color);
+}
+
+/* Panels */
+.dark-mode .panel {
+    background-color: var(--panel-bg);
+    border-color: var(--panel-border);
+    color: var(--text-color);
+}
+
+.dark-mode .panel-default > .panel-heading {
+    background-color: var(--panel-heading-bg);
+    border-color: var(--panel-border);
+    color: var(--panel-heading-text);
+}
+
+.dark-mode .panel-default > .panel-body {
+    background-color: var(--panel-bg);
+    color: var(--text-color);
+}
+
+.dark-mode .panel-default > .panel-footer {
+    background-color: var(--secondary-color);
+    border-color: var(--panel-border);
+    color: var(--text-color);
+}
+
+.dark-mode .panel-info > .panel-heading {
+    background-color: var(--info-color);
+    border-color: var(--info-color);
+    color: white;
+}
+
+.dark-mode .panel-success > .panel-heading {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+.dark-mode .panel-warning > .panel-heading {
+    background-color: var(--warning-color);
+    border-color: var(--warning-color);
+    color: var(--background-color);
+}
+
+.dark-mode .panel-danger > .panel-heading {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    color: white;
+}
+
+/* Tables */
+.dark-mode .table {
+    background-color: var(--table-bg);
+    color: var(--text-color);
+}
+
+.dark-mode .table > thead > tr > th,
+.dark-mode .table > tbody > tr > th,
+.dark-mode .table > tfoot > tr > th,
+.dark-mode .table > thead > tr > td,
+.dark-mode .table > tbody > tr > td,
+.dark-mode .table > tfoot > tr > td {
+    border-color: var(--table-border);
+    color: var(--text-color);
+}
+
+.dark-mode .table > thead > tr > th {
+    background-color: var(--panel-heading-bg);
+    color: var(--panel-heading-text);
+}
+
+.dark-mode .table-hover > tbody > tr:hover {
+    background-color: var(--table-hover);
+}
+
+/* Override Bootstrap's default light table striping colors */
+/* Target all possible Bootstrap table striping selectors from CSS and LESS */
+.dark-mode .table-striped > tbody > tr:nth-of-type(odd),
+.dark-mode .table-striped > tbody > tr:nth-of-type(2n+1),
+.dark-mode .table-striped > tbody > tr:nth-child(odd),
+.dark-mode .table-striped > tbody > tr:nth-child(2n+1),
+.dark-mode .table-striped tbody tr:nth-of-type(odd),
+.dark-mode .table-striped tbody tr:nth-of-type(2n+1),
+.dark-mode .table-striped tbody tr:nth-child(odd),
+.dark-mode .table-striped tbody tr:nth-child(2n+1),
+body.dark-mode .table-striped > tbody > tr:nth-of-type(odd),
+body.dark-mode .table-striped > tbody > tr:nth-of-type(2n+1),
+body.dark-mode .table-striped > tbody > tr:nth-child(odd),
+body.dark-mode .table-striped > tbody > tr:nth-child(2n+1) {
+    background-color: var(--background-color) !important;
+}
+
+.dark-mode .table-striped > tbody > tr:nth-of-type(even),
+.dark-mode .table-striped > tbody > tr:nth-of-type(2n),
+.dark-mode .table-striped > tbody > tr:nth-child(even),
+.dark-mode .table-striped > tbody > tr:nth-child(2n),
+.dark-mode .table-striped tbody tr:nth-of-type(even),
+.dark-mode .table-striped tbody tr:nth-of-type(2n),
+.dark-mode .table-striped tbody tr:nth-child(even),
+.dark-mode .table-striped tbody tr:nth-child(2n),
+body.dark-mode .table-striped > tbody > tr:nth-of-type(even),
+body.dark-mode .table-striped > tbody > tr:nth-of-type(2n),
+body.dark-mode .table-striped > tbody > tr:nth-child(even),
+body.dark-mode .table-striped > tbody > tr:nth-child(2n) {
+    background-color: var(--table-bg) !important;
+}
+
+/* Specifically override Bootstrap's #f9f9f9 color from tables.less */
+.dark-mode .table-striped > tbody > tr:nth-of-type(2n+1),
+.dark-mode .table-striped tbody tr:nth-of-type(2n+1),
+body.dark-mode .table-striped > tbody > tr:nth-of-type(2n+1) {
+    background-color: var(--background-color) !important;
+    background: var(--background-color) !important;
+}
+
+/* Override any inline styles or !important from Bootstrap */
+.dark-mode .table-striped > tbody > tr[style*="#f9f9f9"],
+.dark-mode .table-striped > tbody > tr[style*="f9f9f9"] {
+    background-color: var(--background-color) !important;
+    background: var(--background-color) !important;
+}
+
+/* Forms */
+.dark-mode .form-control {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--input-text);
+}
+
+.dark-mode .form-control:focus {
+    background-color: var(--input-bg);
+    border-color: var(--link-color);
+    color: var(--input-text);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.dark-mode .form-control::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
+}
+
+.dark-mode .input-group-addon {
+    background-color: var(--secondary-color);
+    border-color: var(--input-border);
+    color: var(--text-color);
+}
+
+.dark-mode .form-group label {
+    color: var(--text-color);
+}
+
+.dark-mode .checkbox label,
+.dark-mode .radio label {
+    color: var(--text-color);
+}
+
+/* Buttons */
+.dark-mode .btn-default {
+    background-color: var(--secondary-color);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+.dark-mode .btn-default:hover,
+.dark-mode .btn-default:focus,
+.dark-mode .btn-default:active,
+.dark-mode .btn-default.active {
+    background-color: var(--tertiary-color);
+    border-color: var(--tertiary-color);
+    color: var(--text-color);
+}
+
+.dark-mode .btn-primary {
+    background-color: var(--btn-primary-bg);
+    border-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+}
+
+.dark-mode .btn-primary:hover,
+.dark-mode .btn-primary:focus,
+.dark-mode .btn-primary:active,
+.dark-mode .btn-primary.active {
+    background-color: #0069d9;
+    border-color: #0062cc;
+    color: var(--btn-primary-text);
+}
+
+.dark-mode .btn-success {
+    background-color: var(--btn-success-bg);
+    border-color: var(--btn-success-bg);
+    color: var(--btn-success-text);
+}
+
+.dark-mode .btn-success:hover,
+.dark-mode .btn-success:focus,
+.dark-mode .btn-success:active,
+.dark-mode .btn-success.active {
+    background-color: #218838;
+    border-color: #1e7e34;
+    color: var(--btn-success-text);
+}
+
+.dark-mode .btn-info {
+    background-color: var(--btn-info-bg);
+    border-color: var(--btn-info-bg);
+    color: var(--btn-info-text);
+}
+
+.dark-mode .btn-info:hover,
+.dark-mode .btn-info:focus,
+.dark-mode .btn-info:active,
+.dark-mode .btn-info.active {
+    background-color: #138496;
+    border-color: #117a8b;
+    color: var(--btn-info-text);
+}
+
+.dark-mode .btn-warning {
+    background-color: var(--btn-warning-bg);
+    border-color: var(--btn-warning-bg);
+    color: var(--btn-warning-text);
+}
+
+.dark-mode .btn-warning:hover,
+.dark-mode .btn-warning:focus,
+.dark-mode .btn-warning:active,
+.dark-mode .btn-warning.active {
+    background-color: #e0a800;
+    border-color: #d39e00;
+    color: var(--btn-warning-text);
+}
+
+.dark-mode .btn-danger {
+    background-color: var(--btn-danger-bg);
+    border-color: var(--btn-danger-bg);
+    color: var(--btn-danger-text);
+}
+
+.dark-mode .btn-danger:hover,
+.dark-mode .btn-danger:focus,
+.dark-mode .btn-danger:active,
+.dark-mode .btn-danger.active {
+    background-color: #c82333;
+    border-color: #bd2130;
+    color: var(--btn-danger-text);
+}
+
+/* Alerts */
+.dark-mode .alert {
+    color: var(--text-color);
+}
+
+.dark-mode .alert-success {
+    background-color: #28a745;
+    border-color: #218838;
+    color: white;
+}
+
+.dark-mode .alert-info {
+    background-color: #17a2b8;
+    border-color: #138496;
+    color: white;
+}
+
+.dark-mode .alert-warning {
+    background-color: #ffc107;
+    border-color: #e0a800;
+    color: var(--background-color);
+}
+
+.dark-mode .alert-danger {
+    background-color: #dc3545;
+    border-color: #c82333;
+    color: white;
+}
+
+/* Labels */
+.dark-mode .label {
+    color: var(--text-color);
+}
+
+.dark-mode .label-default {
+    background-color: var(--secondary-color);
+}
+
+.dark-mode .label-primary {
+    background-color: var(--btn-primary-bg);
+}
+
+.dark-mode .label-success {
+    background-color: var(--btn-success-bg);
+}
+
+.dark-mode .label-info {
+    background-color: var(--btn-info-bg);
+}
+
+.dark-mode .label-warning {
+    background-color: var(--btn-warning-bg);
+    color: var(--background-color);
+}
+
+.dark-mode .label-danger {
+    background-color: var(--btn-danger-bg);
+}
+
+/* Badges */
+.dark-mode .badge {
+    color: var(--text-color);
+}
+
+.dark-mode .badge-default {
+    background-color: var(--secondary-color);
+}
+
+/* Wells */
+.dark-mode .well {
+    background-color: var(--surface-color);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+/* Progress bars */
+.dark-mode .progress {
+    background-color: var(--input-bg);
+}
+
+.dark-mode .progress-bar {
+    color: var(--text-color);
+}
+
+.dark-mode .progress-bar-success {
+    background-color: var(--success-color);
+}
+
+.dark-mode .progress-bar-info {
+    background-color: var(--info-color);
+}
+
+.dark-mode .progress-bar-warning {
+    background-color: var(--warning-color);
+}
+
+.dark-mode .progress-bar-danger {
+    background-color: var(--danger-color);
+}
+
+/* Pagination */
+.dark-mode .pagination > li > a,
+.dark-mode .pagination > li > span {
+    background-color: var(--panel-bg);
+    border-color: var(--panel-border);
+    color: var(--text-color);
+}
+
+.dark-mode .pagination > li > a:hover,
+.dark-mode .pagination > li > a:focus {
+    background-color: var(--surface-color);
+    border-color: var(--border-color);
+    color: var(--link-color);
+}
+
+.dark-mode .pagination > .active > a,
+.dark-mode .pagination > .active > span,
+.dark-mode .pagination > .active > a:hover,
+.dark-mode .pagination > .active > span:hover,
+.dark-mode .pagination > .active > a:focus,
+.dark-mode .pagination > .active > span:focus {
+    background-color: var(--btn-primary-bg);
+    border-color: var(--btn-primary-bg);
+    color: white;
+}
+
+/* Breadcrumbs */
+.dark-mode .breadcrumb {
+    background-color: var(--surface-color);
+    color: var(--text-muted);
+}
+
+.dark-mode .breadcrumb > li + li:before {
+    color: var(--text-muted);
+}
+
+.dark-mode .breadcrumb > .active {
+    color: var(--text-color);
+}
+
+/* Jumbotron */
+.dark-mode .jumbotron {
+    background-color: var(--surface-color);
+    color: var(--text-color);
+}
+
+/* Modal */
+.dark-mode .modal-content {
+    background-color: var(--panel-bg);
+    border-color: var(--panel-border);
+    color: var(--text-color);
+}
+
+.dark-mode .modal-header {
+    border-bottom-color: var(--panel-border);
+    color: var(--text-color);
+}
+
+.dark-mode .modal-footer {
+    border-top-color: var(--panel-border);
+}
+
+/* Dropdowns */
+.dark-mode .dropdown-menu {
+    background-color: var(--panel-bg);
+    border-color: var(--panel-border);
+    color: var(--text-color);
+}
+
+.dark-mode .dropdown-menu > li > a {
+    color: var(--text-color);
+}
+
+.dark-mode .dropdown-menu > li > a:hover,
+.dark-mode .dropdown-menu > li > a:focus {
+    background-color: var(--surface-color);
+    color: var(--link-color);
+}
+
+.dark-mode .dropdown-menu > .active > a,
+.dark-mode .dropdown-menu > .active > a:hover,
+.dark-mode .dropdown-menu > .active > a:focus {
+    background-color: var(--btn-primary-bg);
+    color: white;
+}
+
+/* Tooltips */
+.dark-mode .tooltip-inner {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.dark-mode .tooltip.top .tooltip-arrow {
+    border-top-color: var(--border-color);
+}
+
+.dark-mode .tooltip.right .tooltip-arrow {
+    border-right-color: var(--border-color);
+}
+
+.dark-mode .tooltip.bottom .tooltip-arrow {
+    border-bottom-color: var(--border-color);
+}
+
+.dark-mode .tooltip.left .tooltip-arrow {
+    border-left-color: var(--border-color);
+}
+
+/* Popovers */
+.dark-mode .popover {
+    background-color: var(--panel-bg);
+    border-color: var(--panel-border);
+    color: var(--text-color);
+}
+
+.dark-mode .popover-title {
+    background-color: var(--panel-heading-bg);
+    border-bottom-color: var(--panel-border);
+    color: var(--panel-heading-text);
+}
+
+/* List groups */
+.dark-mode .list-group-item {
+    background-color: var(--panel-bg);
+    border-color: var(--panel-border);
+    color: var(--text-color);
+}
+
+.dark-mode .list-group-item:hover,
+.dark-mode .list-group-item:focus {
+    background-color: var(--surface-color);
+    color: var(--link-color);
+}
+
+.dark-mode .list-group-item.active,
+.dark-mode .list-group-item.active:hover,
+.dark-mode .list-group-item.active:focus {
+    background-color: var(--btn-primary-bg);
+    border-color: var(--btn-primary-bg);
+    color: white;
+}
+
+/* Code */
+.dark-mode code,
+.dark-mode kbd,
+.dark-mode pre,
+.dark-mode samp {
+    background-color: var(--code-bg);
+    color: var(--text-color);
+}
+
+.dark-mode pre {
+    border-color: var(--border-color);
+}
+
+/* Blockquotes */
+.dark-mode blockquote {
+    border-left-color: var(--border-color);
+    color: var(--text-muted);
+}
+
+.dark-mode blockquote footer {
+    color: var(--text-muted);
+}
+
+/* HR */
+.dark-mode hr {
+    border-top-color: var(--border-color);
+}
+
+/* Tablesorter specific styles */
+.dark-mode .tablesorter-blue {
+    background-color: var(--panel-bg);
+    border-color: var(--panel-border);
+}
+
+.dark-mode .tablesorter-blue th,
+.dark-mode .tablesorter-blue thead td {
+    background-color: var(--panel-heading-bg);
+    color: var(--panel-heading-text);
+}
+
+.dark-mode .tablesorter-blue tbody td,
+.dark-mode .tablesorter-blue tfoot th,
+.dark-mode .tablesorter-blue tfoot td {
+    color: var(--text-color);
+}
+
+/* FOG specific styles */
+.dark-mode .fogdashbox {
+    background-color: var(--surface-color);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+.dark-mode .fogdashbox-header {
+    background-color: var(--panel-heading-bg);
+    color: var(--panel-heading-text);
+}
+
+.dark-mode #login-history {
+    background-color: var(--surface-color);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+/* Dark mode toggle switch */
+.dark-mode-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.dark-mode-toggle .btn {
+    padding: 8px 12px;
+    border-radius: 20px;
+}
+
+.dark-mode-toggle .btn i {
+    margin-right: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dark-mode-toggle {
+        bottom: 10px;
+        right: 10px;
+    }
+    
+    .dark-mode-toggle .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}

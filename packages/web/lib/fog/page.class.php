@@ -119,6 +119,7 @@ class Page extends FOGBase
             ->addCSS('css/theme.bootstrap_3.css')
             ->addCSS('css/theme.blue.css')
             ->addCSS('css/bootstrap-dialog.min.css')
+            ->addCSS('css/dark-mode.css')
             ->addCSS($dispTheme);
         if (!isset($node)
             || !$node
@@ -286,7 +287,7 @@ class Page extends FOGBase
             'js/bootstrap-dialog.min.js',
             'js/fog/bootstrap-csrf.js',
             'js/fog/fog.js',
-            'js/fog/fog.main.js',
+            'js/fog/fog.theme.js',
             'js/jscolor.min.js'
         );
         $subset = $sub;
