@@ -2109,7 +2109,8 @@ class FOGConfigurationPage extends FOGPage
     public function clientversion()
     {
         $this->title = _('FOG Client Version Management');
-        include '../management/other/clientversion.php';
+        // Use absolute path to ensure FOG_CORE is defined
+        include self::$fogroot . '/management/other/clientversion.php';
     }
     
     /**
