@@ -673,6 +673,11 @@ body.dark-mode .table-striped > tbody > tr:nth-of-type(2n+1) {
     background-color: var(--background-color) !important;
 }
 
+.dark-mode .tablesorter-bootstrap > tbody > tr.even > td,
+.dark-mode .tablesorter-bootstrap > tbody > tr.tablesorter-hasChildRow.even:hover ~ tr.tablesorter-hasChildRow.even ~ .tablesorter-childRow.even > td {
+    background-color: var(--background-color) !important;
+}
+
 .dark-mode .tablesorter-bootstrap > tbody > tr.hover > td,
 .dark-mode .tablesorter-bootstrap > tbody > tr.odd:hover > td,
 .dark-mode .tablesorter-bootstrap > tbody > tr.even:hover > td,

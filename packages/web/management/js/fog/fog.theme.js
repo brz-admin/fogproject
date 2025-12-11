@@ -31,11 +31,12 @@
                     .append($('<i class="fa fa-moon-o">'))
                     .append(' <span class="toggle-text">Dark Mode</span>'));
             
-            // Add to navbar instead of body
-            var navbar = $('.navbar-inverse');
-            if (navbar.length) {
-                navbar.append(toggleButton);
+            // Add to footer only
+            var footer = $('footer.footer');
+            if (footer.length) {
+                footer.prepend(toggleButton);
             } else {
+                // Fallback to body if footer doesn't exist
                 $('body').append(toggleButton);
             }
             
