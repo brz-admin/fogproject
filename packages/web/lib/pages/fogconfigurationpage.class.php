@@ -2109,7 +2109,11 @@ class FOGConfigurationPage extends FOGPage
     public function clientversion()
     {
         $this->title = _('FOG Client Version Management');
-        // Use absolute path to ensure FOG_CORE is defined
+        // Define FOG_CORE constant for the included file
+        if (!defined('FOG_CORE')) {
+            define('FOG_CORE', true);
+        }
+        // Include the client version management page
         include BASEPATH . '/management/other/clientversion.php';
     }
     
