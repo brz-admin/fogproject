@@ -19,15 +19,15 @@ if (!defined('FOG_CORE')) {
 
 // Get current client version setting
 try {
-    $currentVersion = self::getSetting('FOG_CLIENT_VERSION');
+    $currentVersion = FOGBase::getSetting('FOG_CLIENT_VERSION');
 } catch (Exception $e) {
     $currentVersion = '0.13.0'; // Default version
     // Create the setting if it doesn't exist
     try {
-        self::setSetting('FOG_CLIENT_VERSION', $currentVersion);
-        self::log('Created FOG_CLIENT_VERSION setting with default value: ' . $currentVersion);
+        FOGBase::setSetting('FOG_CLIENT_VERSION', $currentVersion);
+        FOGBase::log('Created FOG_CLIENT_VERSION setting with default value: ' . $currentVersion);
     } catch (Exception $createError) {
-        self::log('Failed to create FOG_CLIENT_VERSION setting: ' . $createError->getMessage());
+        FOGBase::log('Failed to create FOG_CLIENT_VERSION setting: ' . $createError->getMessage());
     }
 }
 
@@ -42,10 +42,10 @@ if (isset($_POST['update_client_version'])) {
         }
         
         // Update the setting
-        self::setSetting('FOG_CLIENT_VERSION', $newVersion);
+        FOGBase::setSetting('FOG_CLIENT_VERSION', $newVersion);
         
         // Log the change
-        self::log(sprintf('Updated expected FOG client version from %s to %s', $currentVersion, $newVersion));
+        FOGBase::log(sprintf('Updated expected FOG client version from %s to %s', $currentVersion, $newVersion));
         
         $currentVersion = $newVersion;
         $successMessage = _('Client version updated successfully!');
@@ -67,7 +67,7 @@ if (isset($_POST['toggle_test_group'])) {
         }
         
         // Get the group and update test group status
-        $group = self::getClass('Group', $groupId);
+        $group = FOGBase::getClass('Group', $groupId);
         if (!$group || !$group->isValid()) {
             throw new Exception(_('Group not found'));
         }
@@ -75,7 +75,7 @@ if (isset($_POST['toggle_test_group'])) {
         $group->set('isTestGroup', $isTestGroup);
         if ($group->save()) {
             $action = $isTestGroup ? _('designated as test group') : _('removed from test groups');
-            self::log(sprintf('Group %s (ID: %d) %s', $group->get('name'), $groupId, $action));
+            FOGBase::log(sprintf('Group %s (ID: %d) %s', $group->get('name'), $groupId, $action));
             $successMessage = sprintf(_('Group %s successfully %s!'), $group->get('name'), $action);
         } else {
             throw new Exception(_('Failed to update group test status'));
@@ -122,7 +122,7 @@ if (isset($_POST['upload_client'])) {
         
         if (move_uploaded_file($fileInfo['tmp_name'], $storagePath)) {
             // Create snapin record
-            $snapin = self::getClass('Snapin')
+            $snapin = FOGBase::getClass('Snapin')
                 ->set('name', $snapinName)
                 ->set('description', $snapinDescription)
                 ->set('file', basename($fileInfo['name']))
@@ -132,27 +132,27 @@ if (isset($_POST['upload_client'])) {
                 ->set('timeout', '300')
                 ->set('reboot', '1')
                 ->set('hidden', '0')
-                ->set('createdBy', self::$username);
+                ->set('createdBy', FOGBase::$username);
             
             if ($snapin->save()) {
-                self::log(sprintf('Created client update snapin: %s (ID: %d)', $snapinName, $snapin->get('id')));
+                FOGBase::log(sprintf('Created client update snapin: %s (ID: %d)', $snapinName, $snapin->get('id')));
                 
                 // Automatically assign to test groups if requested
                 if ($deployToTestGroups && !empty($testGroups)) {
                     $successCount = 0;
                     foreach ($testGroups as $testGroup) {
                         try {
-                            $association = self::getClass('SnapinGroupAssociation')
+                            $association = FOGBase::getClass('SnapinGroupAssociation')
                                 ->set('snapinID', $snapin->get('id'))
                                 ->set('groupID', $testGroup->get('id'));
                             
                             if ($association->save()) {
-                                self::log(sprintf('Assigned snapin %s to test group %s (ID: %d)', 
+                                FOGBase::log(sprintf('Assigned snapin %s to test group %s (ID: %d)', 
                                     $snapinName, $testGroup->get('name'), $testGroup->get('id')));
                                 $successCount++;
                             }
                         } catch (Exception $e) {
-                            self::log('Failed to assign snapin to group ' . $testGroup->get('name') . ': ' . $e->getMessage());
+                            FOGBase::log('Failed to assign snapin to group ' . $testGroup->get('name') . ': ' . $e->getMessage());
                         }
                     }
                     
@@ -187,7 +187,7 @@ if (isset($_POST['promote_to_production'])) {
         }
         
         // Get the snapin
-        $snapin = self::getClass('Snapin', $snapinId);
+        $snapin = FOGBase::getClass('Snapin', $snapinId);
         if (!$snapin || !$snapin->isValid()) {
             throw new Exception(_('Snapin not found'));
         }
@@ -246,7 +246,7 @@ if (isset($_POST['promote_to_production'])) {
             $productionSnapinName = str_replace(' (Test) ' . date('Y-m-d'), '', $snapin->get('name'));
             $productionSnapinDescription = str_replace(' - Test Deployment', '', $snapin->get('description'));
             
-            $productionSnapin = self::getClass('Snapin')
+            $productionSnapin = FOGBase::getClass('Snapin')
                 ->set('name', $productionSnapinName)
                 ->set('description', $productionSnapinDescription)
                 ->set('file', $snapin->get('file'))
@@ -256,27 +256,27 @@ if (isset($_POST['promote_to_production'])) {
                 ->set('timeout', $snapin->get('timeout'))
                 ->set('reboot', $snapin->get('reboot'))
                 ->set('hidden', $snapin->get('hidden'))
-                ->set('createdBy', self::$username);
+                ->set('createdBy', FOGBase::$username);
             
             if ($productionSnapin->save()) {
-                self::log(sprintf('Promoted test snapin %s (ID: %d) to production as %s (ID: %d)', 
+                FOGBase::log(sprintf('Promoted test snapin %s (ID: %d) to production as %s (ID: %d)', 
                     $snapin->get('name'), $snapin->get('id'), $productionSnapinName, $productionSnapin->get('id')));
                 
                 // Assign to all production groups
                 $successCount = 0;
                 foreach ($productionGroups as $prodGroup) {
                     try {
-                        $association = self::getClass('SnapinGroupAssociation')
+                        $association = FOGBase::getClass('SnapinGroupAssociation')
                             ->set('snapinID', $productionSnapin->get('id'))
                             ->set('groupID', $prodGroup->get('id'));
                         
                         if ($association->save()) {
-                            self::log(sprintf('Assigned production snapin %s to group %s (ID: %d)', 
+                            FOGBase::log(sprintf('Assigned production snapin %s to group %s (ID: %d)', 
                                 $productionSnapinName, $prodGroup->get('name'), $prodGroup->get('id')));
                             $successCount++;
                         }
                     } catch (Exception $e) {
-                        self::log('Failed to assign production snapin to group ' . $prodGroup->get('name') . ': ' . $e->getMessage());
+                        FOGBase::log('Failed to assign production snapin to group ' . $prodGroup->get('name') . ': ' . $e->getMessage());
                     }
                 }
                 
@@ -285,7 +285,7 @@ if (isset($_POST['promote_to_production'])) {
                 // Mark the original test snapin as hidden for cleanup
                 $snapin->set('hidden', '1');
                 $snapin->save();
-                self::log(sprintf('Marked original test snapin %s (ID: %d) as hidden', $snapin->get('name'), $snapin->get('id')));
+                FOGBase::log(sprintf('Marked original test snapin %s (ID: %d) as hidden', $snapin->get('name'), $snapin->get('id')));
                 
             } else {
                 throw new Exception(_('Failed to create production snapin'));
@@ -299,7 +299,7 @@ if (isset($_POST['promote_to_production'])) {
 
 // Get list of existing client-related snapins
 try {
-    $clientSnapins = self::getClass('SnapinManager')->find(
+    $clientSnapins = FOGBase::getClass('SnapinManager')->find(
         array('name' => array('LIKE', 'FOG Client%')),
         '',
         'name DESC'
@@ -310,7 +310,7 @@ try {
 
 // Get client version statistics
 try {
-    $versionStats = self::getClass('HostManager')->getSubObjectIDs(
+    $versionStats = FOGBase::getClass('HostManager')->getSubObjectIDs(
         'Host',
         array('clientVersion' => array('NOT LIKE', '')),
         'clientVersion',
@@ -419,7 +419,7 @@ if (isset($_POST['bulk_test_group_action'])) {
                 $groupId = intval($groupId);
                 if ($groupId <= 0) continue;
                 
-                $group = self::getClass('Group', $groupId);
+                $group = FOGBase::getClass('Group', $groupId);
                 if ($group && $group->isValid()) {
                     $isTestGroup = ($action === 'add') ? 1 : 0;
                     $group->set('isTestGroup', $isTestGroup);
@@ -431,7 +431,7 @@ if (isset($_POST['bulk_test_group_action'])) {
             
             if ($successCount > 0) {
                 $actionText = ($action === 'add') ? _('added to test groups') : _('removed from test groups');
-                self::log(sprintf('Bulk operation: %d groups %s', $successCount, $actionText));
+                FOGBase::log(sprintf('Bulk operation: %d groups %s', $successCount, $actionText));
                 $successMessage = sprintf(_('Successfully %s %d group(s)'), $actionText, $successCount);
             }
         }
@@ -442,7 +442,7 @@ if (isset($_POST['bulk_test_group_action'])) {
 
 // Get all groups
 try {
-    $allGroups = self::getClass('GroupManager')->find('', '', 'name ASC');
+    $allGroups = FOGBase::getClass('GroupManager')->find('', '', 'name ASC');
     $testGroups = array_filter($allGroups, function($group) {
         return $group->get('isTestGroup') == 1;
     });
