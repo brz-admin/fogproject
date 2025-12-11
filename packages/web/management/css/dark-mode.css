@@ -721,41 +721,40 @@ body.dark-mode .table-striped > tbody > tr:nth-of-type(2n+1) {
 }
 
 /* Dark mode toggle switch */
-.dark-mode-toggle {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1000;
+.dark-mode-toggle-li {
+    display: inline-block;
+    margin-right: 15px;
 }
 
-.dark-mode-toggle .btn {
+.dark-mode-toggle-li .dark-mode-toggle-btn {
     padding: 6px 12px;
     border-radius: 20px;
     background-color: var(--surface-color);
     border-color: var(--border-color);
     color: var(--text-color);
+    margin-top: 8px;
 }
 
-.dark-mode-toggle .btn:hover,
-.dark-mode-toggle .btn:focus {
+.dark-mode-toggle-li .dark-mode-toggle-btn:hover,
+.dark-mode-toggle-li .dark-mode-toggle-btn:focus {
     background-color: var(--panel-heading-bg);
     border-color: var(--border-color);
     color: var(--text-color);
 }
 
-.dark-mode-toggle .btn i {
+.dark-mode-toggle-li .dark-mode-toggle-btn i {
     margin-right: 5px;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .dark-mode-toggle {
-        top: 5px;
-        right: 5px;
+    .dark-mode-toggle-li {
+        margin-right: 10px;
     }
     
-    .dark-mode-toggle .btn {
+    .dark-mode-toggle-li .dark-mode-toggle-btn {
         padding: 4px 8px;
         font-size: 12px;
+        margin-top: 5px;
     }
 }
