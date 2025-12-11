@@ -2110,7 +2110,7 @@ class FOGConfigurationPage extends FOGPage
     {
         $this->title = _('FOG Client Version Management');
         // Use absolute path to ensure FOG_CORE is defined
-        include self::$fogroot . '/management/other/clientversion.php';
+        include BASEPATH . '/management/other/clientversion.php';
     }
     
     /**

@@ -222,7 +222,9 @@ class HostManager extends FOGManagerController
                 );
             }
         }
-        self::$Host = new Host(@max($MACHost));
+        if (count($MACHost ?: array()) > 0) {
+            self::$Host = new Host(@max($MACHost));
+        }
         return;
     }
     /**
