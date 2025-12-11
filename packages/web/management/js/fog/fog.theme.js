@@ -26,7 +26,7 @@
         // Setup the theme toggle button
         setupThemeToggle: function() {
             // Create theme toggle button as a list item for footer
-            var toggleButton = $('<li class="dark-mode-toggle-li">')
+            var toggleButton = $('<li class="dark-mode-toggle-li pull-right">')
                 .append($('<button type="button" class="btn btn-default dark-mode-toggle-btn">')
                     .append($('<i class="fa fa-moon-o">'))
                     .append(' <span class="toggle-text">Dark Mode</span>'));
