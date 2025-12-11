@@ -31,8 +31,13 @@
                     .append($('<i class="fa fa-moon-o">'))
                     .append(' <span class="toggle-text">Dark Mode</span>'));
             
-            // Add to DOM
-            $('body').append(toggleButton);
+            // Add to navbar instead of body
+            var navbar = $('.navbar-inverse');
+            if (navbar.length) {
+                navbar.append(toggleButton);
+            } else {
+                $('body').append(toggleButton);
+            }
             
             // Toggle functionality
             toggleButton.find('button').on('click', function() {
