@@ -123,6 +123,7 @@ class SnapinManagementPage extends FOGPage
                     self::$foglang['Storage'],
                     self::$foglang['Group']
                 ),
+                "?node=giteasnapin" => self::$foglang['Gitea Snapin Management'],
                 $this->membership => self::$foglang['Membership'],
                 $this->delformat => self::$foglang['Delete'],
             );
