@@ -2924,6 +2924,7 @@ class FOGConfigurationPage extends FOGPage
             'FOG_CLIENT_PRINTERMANAGER_ENABLED' => $checkbox,
             // FOG Service - Snapins
             'FOG_CLIENT_SNAPIN_ENABLED' => $checkbox,
+            'FOG_SNAPIN_GITEA_SERVER' => true,
             // FOG Service - Task Reboot
             'FOG_CLIENT_TASKREBOOT_ENABLED' => $checkbox,
             'FOG_TASK_FORCE_ENABLED' => $checkbox,

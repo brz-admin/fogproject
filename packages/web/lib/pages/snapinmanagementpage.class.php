@@ -629,7 +629,9 @@ class SnapinManagementPage extends FOGPage
             . '<div class="input-group">'
             . '<input type="url" class="snapinurl-input form-control" '
             . 'name="snapinurl" id="snapinurl" placeholder="'
-            . _('https://gitea.company.com/user/repo/raw/branch/script.ps1')
+            . (!empty(self::getSetting('FOG_SNAPIN_GITEA_SERVER')) ? 
+                self::getSetting('FOG_SNAPIN_GITEA_SERVER') . '/user/repo/raw/branch/script.ps1' : 
+                _('https://gitea.company.com/user/repo/raw/branch/script.ps1'))
             . '"/>'
             . '</div>'
             . '</span>',
@@ -645,6 +647,20 @@ class SnapinManagementPage extends FOGPage
             . '<option value="http">HTTP</option>'
             . '<option value="git">Git Raw</option>'
             . '</select>'
+            . '</div>'
+            . '</span>',
+            '<span class="snapinurl-section hiddeninitially">'
+            . '<label for="snapingiteaserver">'
+            . _('Gitea Server Base URL')
+            . '</label>'
+            . '</span>' => '<span class="snapinurl-section hiddeninitially">'
+            . '<div class="input-group">'
+            . '<input type="text" class="snapingiteaserver-input form-control" '
+            . 'name="snapingiteaserver" id="snapingiteaserver" placeholder="'
+            . _('https://gitea.company.com')
+            . '" value="'
+            . self::getSetting('FOG_SNAPIN_GITEA_SERVER')
+            . '"/>'
             . '</div>'
             . '</span>',
             (
@@ -758,6 +774,7 @@ class SnapinManagementPage extends FOGPage
         $snapintype = filter_input(INPUT_POST, 'snapintype');
         $snapinurl = filter_input(INPUT_POST, 'snapinurl');
         $snapinurltype = filter_input(INPUT_POST, 'snapinurltype');
+        $snapingiteaserver = filter_input(INPUT_POST, 'snapingiteaserver');
         
         // Handle file vs URL
         $snapinfile = '';
@@ -765,7 +782,12 @@ class SnapinManagementPage extends FOGPage
         $urlType = 'local';
         
         if ($snapintype === 'url') {
-            $url = $snapinurl;
+            // If gitea server is provided and URL doesn't start with http/https, prepend the gitea server URL
+            if (!empty($snapingiteaserver) && !preg_match('#^https?://#i', $snapinurl)) {
+                $url = rtrim($snapingiteaserver, '/') . '/' . ltrim($snapinurl, '/');
+            } else {
+                $url = $snapinurl;
+            }
             $urlType = $snapinurltype ?: 'https';
             $snapinfile = basename(parse_url($url, PHP_URL_PATH));
         } else {

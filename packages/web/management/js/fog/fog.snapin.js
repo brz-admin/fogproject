@@ -79,6 +79,16 @@
     });
     // Initialize based on current selection
     $('.snapintype-input').trigger('change');
+    
+    // Handle gitea server field - update URL placeholder when gitea server changes
+    $('.snapingiteaserver-input').on('change blur', function(e) {
+        var giteaServer = $(this).val();
+        var urlInput = $('.snapinurl-input');
+        if (giteaServer && urlInput.val().startsWith('https://gitea.company.com')) {
+            // If URL is the default placeholder, update it with the new gitea server
+            urlInput.val(giteaServer + '/user/repo/raw/branch/script.ps1');
+        }
+    });
 })(jQuery);
 function updateCmdStore() {
     if (typeof $('.cmdlet3').val() === 'undefined') return;
