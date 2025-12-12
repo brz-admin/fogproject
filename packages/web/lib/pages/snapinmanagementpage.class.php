@@ -78,6 +78,11 @@ class SnapinManagementPage extends FOGPage
          * Pull in the FOG Page class items.
          */
         parent::__construct($name);
+        
+        /**
+         * Add Gitea Snapin Management to the main menu
+         */
+        $this->menu['giteasnapin'] = self::$foglang['Gitea Snapin Management'];
         /**
          * Generate our snapin arg templates.
          */
@@ -123,7 +128,6 @@ class SnapinManagementPage extends FOGPage
                     self::$foglang['Storage'],
                     self::$foglang['Group']
                 ),
-                "?node=giteasnapin" => self::$foglang['Gitea Snapin Management'],
                 $this->membership => self::$foglang['Membership'],
                 $this->delformat => self::$foglang['Delete'],
             );
