@@ -2925,6 +2925,9 @@ class FOGConfigurationPage extends FOGPage
             // FOG Service - Snapins
             'FOG_CLIENT_SNAPIN_ENABLED' => $checkbox,
             'FOG_SNAPIN_GITEA_SERVER' => true,
+            'FOG_SNAPIN_GITEA_ORG' => true,
+            'FOG_GITEA_AUTO_REFRESH' => $checkbox,
+            'FOG_GITEA_REFRESH_INTERVAL' => true,
             // FOG Service - Task Reboot
             'FOG_CLIENT_TASKREBOOT_ENABLED' => $checkbox,
             'FOG_TASK_FORCE_ENABLED' => $checkbox,

@@ -3790,4 +3790,8 @@ $this->schema[] = array(
     . "VALUES "
     . "('FOG_SNAPIN_URL_DOMAINS','Comma-separated list of allowed domains for external snapin URLs. Leave empty to allow all domains. Example: gitea.company.com,github.com','', 'Snapin Management')",
     . "('FOG_SNAPIN_GITEA_SERVER','Base URL for Gitea server to fetch snapin scripts. Example: https://gitea.company.com','', 'Snapin Management')",
+    . "('FOG_SNAPIN_GITEA_ORG','Gitea organization name to fetch snapin repositories from. Example: PSappInstalls','', 'Snapin Management')",
+    . "('FOG_GITEA_AUTO_REFRESH','Enable automatic repository refresh (1=enabled, 0=disabled)','1', 'Snapin Management')",
+    . "('FOG_GITEA_REFRESH_INTERVAL','Automatic refresh interval in seconds (default: 86400 = 24 hours)','86400', 'Snapin Management')",
+    . "('FOG_GITEA_LAST_CHECK','Timestamp of last automatic update check','0', 'Snapin Management')",
 );
