@@ -112,7 +112,7 @@ class GlpiPlugin extends FOGBase {
      * Install database tables
      */
     protected function installDatabase() {
-        $migration = new GlpiDatabaseMigration();
+        $migration = new glpiDatabaseMigration();
         $migration->install();
     }
     
@@ -120,7 +120,7 @@ class GlpiPlugin extends FOGBase {
      * Uninstall database tables
      */
     protected function uninstallDatabase() {
-        $migration = new GlpiDatabaseMigration();
+        $migration = new glpiDatabaseMigration();
         $migration->uninstall();
     }
     

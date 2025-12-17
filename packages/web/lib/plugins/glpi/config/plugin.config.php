@@ -20,7 +20,7 @@
  * @link     https://fogproject.org
  */
 $fog_plugin = array();
-$fog_plugin['name'] = 'GLPI';
+$fog_plugin['name'] = 'glpi';
 $fog_plugin['description'] = 'Integrate FOG with GLPI inventory system for automatic host synchronization and management.';
 $fog_plugin['menuicon'] = 'fa fa-database fa-fw';
 $fog_plugin['menuicon_hover'] = null;

@@ -14,7 +14,7 @@
 /**
  * GLPI Database Migration
  */
-class GlpiDatabaseMigration extends FOGBase {
+class glpiDatabaseMigration extends FOGBase {
     
     /**
      * Install database tables
