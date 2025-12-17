@@ -95,6 +95,7 @@ class SubMenuData extends Hook
                 'settings' => self::$foglang['FOGSettings'],
                 'logviewer' => self::$foglang['LogViewer'],
                 'config' => self::$foglang['ConfigSave'],
+                'giteasnapin' => 'Gitea Snapin Management',
             
             );
             break;
@@ -129,8 +130,8 @@ class SubMenuData extends Hook
             $arguments['menu'] = array();
             break;
         case 'snapin':
-            $arguments['menu']['giteasnapin'] = self::$foglang['Gitea Snapin Management'];
-            $arguments['menu']['showgitea'] = _('Show Gitea Snapins');
+            $arguments['menu']['giteasnapin'] = 'Gitea Snapin Management';
+            $arguments['menu']['showgitea'] = 'Show Gitea Snapins';
             break;
         case 'storage':
             $arguments['menu'] = array(
