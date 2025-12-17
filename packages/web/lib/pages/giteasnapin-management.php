@@ -26,7 +26,7 @@ $repoCache = array();
  */
 $lastUpdateCheck = 0;
 
-// Display the main Gitea snapin management page
+// Display main Gitea snapin management page
 echo '<div class="col-xs-9">';
 echo '<div class="panel panel-info">';
 echo '<div class="panel-heading text-center">';
@@ -45,39 +45,50 @@ if (empty($giteaServer) || empty($giteaOrg)) {
     echo '</div>';
     echo '<div class="panel-body">';
     
-    echo '<form method="post" class="form-horizontal">';
+    echo '<form method="post" class="form-horizontal" id="gitea-settings-form">';
     echo '<div class="form-group">';
     echo '<label class="col-sm-3 control-label">' . _('Gitea Server URL') . '</label>';
     echo '<div class="col-sm-6">';
-    echo '<input type="url" name="gitea_server" class="form-control" placeholder="https://gitea.example.com" value="' . htmlspecialchars($giteaServer, ENT_QUOTES, 'UTF-8') . '" required />';
+    echo '<input type="url" class="form-control" name="gitea_server" id="gitea_server" placeholder="https://gitea.example.com" value="' . htmlspecialchars($giteaServer) . '">';
     echo '</div>';
     echo '</div>';
     
     echo '<div class="form-group">';
-    echo '<label class="col-sm-3 control-label">' . _('Organization Name') . '</label>';
+    echo '<label class="col-sm-3 control-label">' . _('Gitea Organization') . '</label>';
     echo '<div class="col-sm-6">';
-    echo '<input type="text" name="gitea_org" class="form-control" placeholder="my-organization" value="' . htmlspecialchars($giteaOrg, ENT_QUOTES, 'UTF-8') . '" required />';
+    echo '<input type="text" class="form-control" name="gitea_org" id="gitea_org" placeholder="my-org" value="' . htmlspecialchars($giteaOrg) . '">';
     echo '</div>';
     echo '</div>';
     
     echo '<div class="form-group">';
-    echo '<div class="col-sm-9 col-sm-offset-3">';
-    echo '<button type="submit" name="save_gitea_settings" class="btn btn-primary">' . _('Save Configuration') . '</button>';
+    echo '<div class="col-sm-offset-3 col-sm-6">';
+    echo '<button type="button" class="btn btn-info" id="save-gitea-settings">' . _('Save Settings') . '</button>';
+    echo ' <span id="save-status"></span>';
     echo '</div>';
     echo '</div>';
     
     echo '</form>';
     echo '</div>';
     echo '</div>';
+    echo '<div class="panel panel-info">';
+    echo '<div class="panel-heading text-center">';
+    echo '<h4>' . _('Repository List') . '</h4>';
+    echo '</div>';
+    echo '<div class="panel-body" id="repo-list">';
+    echo '<div class="alert alert-info">' . _('Configure Gitea settings first to see repositories') . '</div>';
     echo '</div>';
 } else {
     echo '<div class="form-group">';
-    echo '<button type="button" id="refresh-repos" class="btn btn-primary">' . _('Refresh Repository List') . '</button>';
-    echo '<button type="button" id="import-selected" class="btn btn-success">' . _('Import Selected') . '</button>';
-    echo '<button type="button" id="check-updates" class="btn btn-info">' . _('Check for Updates') . '</button>';
+    echo '<div class="col-sm-12">';
+    echo '<button class="btn btn-warning" id="configure-gitea">' . _('Reconfigure Gitea Settings') . '</button>';
+    echo '<button class="btn btn-info" id="refresh-repos">' . _('Refresh Repositories') . '</button>';
     echo '</div>';
-    
-    echo '<div id="repo-list-container">';
+    echo '</div>';
+    echo '<div class="panel panel-info">';
+    echo '<div class="panel-heading text-center">';
+    echo '<h4>' . _('Repository List') . '</h4>';
+    echo '</div>';
+    echo '<div class="panel-body" id="repo-list">';
     echo '<div class="text-center"><i class="fa fa-spinner fa-spin fa-3x"></i></div>';
     echo '</div>';
 }
@@ -458,7 +469,7 @@ function giteaJavaScript()
     </script>
     <?php
     $javascript = ob_get_clean();
-    FOGCore::$HookManager->add('javascript', $javascript);
+    echo $javascript;
 }
 
 /**
