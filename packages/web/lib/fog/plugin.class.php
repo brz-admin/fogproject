@@ -307,10 +307,13 @@ class Plugin extends FOGController
             '%sManager',
             $this->get('name')
         );
+        error_log('Looking for manager class: ' . $classManager);
+        error_log('Available classes: ' . implode(', ', get_declared_classes()));
         if (!class_exists($classManager)) {
+            error_log('Manager class not found, using parent manager');
             return parent::getManager();
         }
-
+        error_log('Found manager class, creating instance');
         return new $classManager();
     }
     /**

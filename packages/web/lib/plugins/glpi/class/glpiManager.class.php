@@ -37,6 +37,7 @@ class glpiManager extends FOGBase
     public function __construct()
     {
         parent::__construct();
+        error_log('glpiManager constructor called');
         $this->loadSettings();
     }
     
@@ -47,6 +48,7 @@ class glpiManager extends FOGBase
      */
     public function install()
     {
+        error_log('glpiManager install() called');
         try {
             // Install database tables
             $this->installDatabase();
