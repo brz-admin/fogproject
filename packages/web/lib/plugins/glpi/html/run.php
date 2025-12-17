@@ -11,7 +11,7 @@
  * @link     https://fogproject.org
  */
 
-require_once dirname(__FILE__) . '/../../commons/init.php';
+require_once dirname(__FILE__) . '/../../../commons/init.php';
 
 // Load the GLPI plugin manager
 $GlpiManager = new GlpiManager();
