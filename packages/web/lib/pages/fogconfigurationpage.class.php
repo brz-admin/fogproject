@@ -2131,7 +2131,7 @@ class FOGConfigurationPage extends FOGPage
             define('FOG_CORE', true);
         }
         // Include gitea snapin management page
-        include BASEPATH . '/management/other/giteasnapin-management.php';
+        include BASEPATH . '/management/other/giteasnapin-test.php';
     }
     
     /**
