@@ -79,10 +79,7 @@ class SnapinManagementPage extends FOGPage
          */
         parent::__construct($name);
         
-        /**
-         * Add Gitea Snapin Management to the main menu
-         */
-        $this->menu['giteasnapin'] = self::$foglang['Gitea Snapin Management'];
+
         /**
          * Generate our snapin arg templates.
          */
@@ -1863,5 +1860,74 @@ class SnapinManagementPage extends FOGPage
             $this->obj->load();
             self::redirect($this->formAction);
         }
+    }
+    
+    /**
+     * Shows snapins that were imported from Gitea
+     *
+     * @return void
+     */
+    public function showGiteaSnapins()
+    {
+        $this->title = _('Gitea Snapins');
+        
+        // Get all Gitea-based snapins (those with URL type 'https')
+        $giteaSnapins = self::getClass('SnapinManager')->find(
+            array('urlType' => 'https')
+        );
+        
+        echo '<div class="col-xs-9">';
+        echo '<div class="panel panel-info">';
+        echo '<div class="panel-heading text-center">';
+        echo '<h4 class="title">' . $this->title . '</h4>';
+        echo '</div>';
+        echo '<div class="panel-body">';
+        
+        if (count($giteaSnapins) === 0) {
+            echo '<div class="alert alert-info">';
+            echo _('No Gitea-based snapins found. Import snapins from the Gitea Snapin Management page first.');
+            echo '</div>';
+        } else {
+            echo '<p>' . _('The following snapins were imported from Gitea:') . '</p>';
+            
+            // Set up table headers
+            $this->headerData = array(
+                _('Snapin Name'),
+                _('Description'),
+                _('Repository URL'),
+                _('Actions')
+            );
+            
+            $this->templates = array(
+                '${name}',
+                '${description}',
+                '${url}',
+                '<a href="?node=about&sub=giteasnapin" class="btn btn-primary btn-sm">' . _('Manage Gitea') . '</a>'
+            );
+            
+            $this->attributes = array(
+                array(),
+                array(),
+                array(),
+                array('class' => 'filter-false', 'width' => 150)
+            );
+            
+            // Build data rows
+            foreach ($giteaSnapins as $snapin) {
+                $this->data[] = array(
+                    'name' => $snapin->get('name'),
+                    'description' => $snapin->get('description'),
+                    'url' => $snapin->get('url'),
+                    'id' => $snapin->get('id')
+                );
+            }
+            
+            // Render the table
+            $this->render();
+        }
+        
+        echo '</div>';
+        echo '</div>';
+        echo '</div>';
     }
 }

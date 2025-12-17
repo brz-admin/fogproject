@@ -130,6 +130,7 @@ class SubMenuData extends Hook
             break;
         case 'snapin':
             $arguments['menu']['giteasnapin'] = self::$foglang['Gitea Snapin Management'];
+            $arguments['menu']['showgitea'] = _('Show Gitea Snapins');
             break;
         case 'storage':
             $arguments['menu'] = array(

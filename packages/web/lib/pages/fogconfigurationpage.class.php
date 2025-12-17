@@ -48,6 +48,7 @@ class FOGConfigurationPage extends FOGPage
             'newMenu' => self::$foglang['NewMenu'],
             'clientupdater' => self::$foglang['ClientUpdater'],
             'clientversion' => _('Client Version Management'),
+            'giteasnapin' => _('Gitea Snapin Management'),
             'maclist' => self::$foglang['MACAddrList'],
             'settings' => self::$foglang['FOGSettings'],
             'logviewer' => self::$foglang['LogViewer'],
@@ -2115,6 +2116,22 @@ class FOGConfigurationPage extends FOGPage
         }
         // Include the client version management page
         include BASEPATH . '/management/other/clientversion.php';
+    }
+    
+    /**
+     * Presents Gitea Snapin Management interface.
+     *
+     * @return void
+     */
+    public function giteasnapin()
+    {
+        $this->title = _('Gitea Snapin Management');
+        // Define FOG_CORE constant for the included file
+        if (!defined('FOG_CORE')) {
+            define('FOG_CORE', true);
+        }
+        // Include gitea snapin management page
+        include BASEPATH . '/lib/pages/giteasnapin-management.php';
     }
     
     /**
