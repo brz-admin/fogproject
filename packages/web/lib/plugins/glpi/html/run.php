@@ -11,7 +11,29 @@
  * @link     https://fogproject.org
  */
 
-require_once dirname(__FILE__) . '/../../../commons/init.php';
+// Try to find commons/init.php from various possible locations
+$possiblePaths = [
+    dirname(__FILE__) . '/../../../commons/init.php',
+    dirname(__FILE__) . '/../../commons/init.php',
+    dirname(__FILE__) . '/../../../../commons/init.php',
+    '../../../commons/init.php',
+    '../../commons/init.php'
+];
+
+$initFile = null;
+foreach ($possiblePaths as $path) {
+    if (file_exists($path)) {
+        $initFile = $path;
+        break;
+    }
+}
+
+if (!$initFile) {
+    error_log('GLPI Plugin: Could not find FOG init.php. Checked paths: ' . implode(', ', $possiblePaths));
+    die('FOG initialization file not found. Please check plugin installation.');
+}
+
+require_once $initFile;
 
 // Load the GLPI plugin manager
 $GlpiManager = new GlpiManager();
