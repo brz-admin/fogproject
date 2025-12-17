@@ -55,7 +55,7 @@ class GlpiManager extends FOGBase
             $this->installDefaultSettings();
             
             // Log installation
-            $this->log('GLPI Integration plugin installed successfully');
+            error_log('GLPI Integration plugin installed successfully');
             
             return true;
             
@@ -80,12 +80,12 @@ class GlpiManager extends FOGBase
             $this->uninstallSettings();
             
             // Log uninstallation
-            $this->log('GLPI Integration plugin uninstalled successfully');
+            error_log('GLPI Integration plugin uninstalled successfully');
             
             return true;
             
         } catch (Exception $e) {
-            $this->log('GLPI Integration plugin uninstallation failed: ' . $e->getMessage());
+            error_log('GLPI Integration plugin uninstallation failed: ' . $e->getMessage());
             return false;
         }
     }
