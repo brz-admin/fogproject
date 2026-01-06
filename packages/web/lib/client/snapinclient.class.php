@@ -188,7 +188,9 @@ class SnapinClient extends FOGClient implements FOGClientSend
                     if ($Snapin->isExternal()) {
                         $fileUrl = $Snapin->get('url');
                     } else {
-                        $fileUrl = rtrim(isset($StorageNode->location_url) ? $StorageNode->location_url : '', '/') . '/' . $Snapin->get('file');
+                        // For local files, keep only the base URL (without filename)
+                        // The client appends the filename when constructing the download URL
+                        $fileUrl = rtrim(isset($StorageNode->location_url) ? $StorageNode->location_url : '', '/');
                     }
                     
                     $info['snapins'][] = array(
